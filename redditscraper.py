@@ -31,6 +31,29 @@ def fetch_posts(department, limit=20) -> list:
         posts.append(post_info)
     return posts
 
+def fetch_post_comments(post_id, limit=10) -> list:
+    """
+    Fetch comments for a specific post by its ID.
+    Args:
+        post_id (str): The ID of the Reddit post.
+        limit (int): Number of comments to fetch. Default is 10.
+    Returns:
+        list: A list of dictionaries containing comment information.
+              - Includes: 'author', 'body', 'score', 'created_utc'
+    """
+    submission = reddit.submission(id=post_id)
+    comments = []
+    for comment in submission.comments:
+        comments.append({
+            'body': comment.body,
+            'id': comment.id,
+            'parent_id': comment.parent_id,
+            'score': comment.score,
+            'created_utc': comment.created_utc,
+
+        })
+    return comments
+
     
 def main():
     dept = input("Enter the department code (e.g., cmput or int d): ").strip().lower()
@@ -43,6 +66,10 @@ def main():
         print(f"Comments: {post['num_comments']}")
         print(f"Posted on (UTC): {post['created_utc']}")
         print(f"Content: \n{post['selftext'][:100]}...")  # Print first 100 characters of the post
+        comments = fetch_post_comments(post['id'])
+        print("Top Comments:")
+        for comment in comments:
+            print(comment)
         print("-" * 40)
 if __name__ == "__main__":
     main()
