@@ -1,4 +1,6 @@
 import praw
+from datetime import datetime
+
 
 reddit = praw.Reddit(
     client_id="CmE8lqF33R2qj8pN9Awtiw",
@@ -50,6 +52,7 @@ def fetch_post_comments(post_id, limit=10) -> list:
             'parent_id': comment.parent_id,
             'score': comment.score,
             'created_utc': comment.created_utc,
+            'url': f"https://www.reddit.com{comment.permalink}"
 
         })
     return comments
@@ -64,7 +67,7 @@ def main():
         print(f"URL: {post['url']}")
         print(f"Score: {post['score']}")
         print(f"Comments: {post['num_comments']}")
-        print(f"Posted on (UTC): {post['created_utc']}")
+        print(f"Posted on (UTC): {datetime.fromtimestamp(post['created_utc']).strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"Content: \n{post['selftext'][:100]}...")  # Print first 100 characters of the post
         comments = fetch_post_comments(post['id'])
         print("Top Comments:")
